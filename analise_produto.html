@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AutomaxHub — Solicitar Análise de Produto</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-deep: #0a0e1a;
+    --bg: #0f1424;
+    --bg-card: #161b2e;
+    --bg-input: #1c2238;
+    --bg-input-focus: #1f2742;
+    --border: #2a3352;
+    --border-focus: #4f6ef7;
+    --text: #e8ecf4;
+    --text-muted: #7d8aa6;
+    --text-label: #a0adc4;
+    --primary: #4f6ef7;
+    --primary-glow: rgba(79, 110, 247, 0.25);
+    --primary-hover: #6580f9;
+    --accent: #00d4aa;
+    --accent-glow: rgba(0, 212, 170, 0.15);
+    --orange: #f7954f;
+    --red: #f74f4f;
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg-deep);
+    color: var(--text);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body::before {
+    content: '';
+    position: fixed; top: -50%; left: -50%; width: 200%; height: 200%;
+    background: radial-gradient(ellipse at 20% 20%, rgba(79,110,247,0.06) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(0,212,170,0.04) 0%, transparent 50%);
+    pointer-events: none; z-index: 0;
+  }
+
+  /* ===== HEADER ===== */
+  .header {
+    padding: 20px 24px; border-bottom: 1px solid var(--border);
+    background: var(--bg); position: sticky; top: 0; z-index: 100;
+    backdrop-filter: blur(12px);
+  }
+  .header-inner { max-width: 720px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; }
+  .brand { display: flex; align-items: center; gap: 12px; }
+  .brand-icon {
+    width: 38px; height: 38px;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+    border-radius: 10px; display: flex; align-items: center; justify-content: center;
+    font-size: 18px; font-weight: 800; color: #fff; letter-spacing: -1px;
+  }
+  .brand-text { display: flex; flex-direction: column; }
+  .brand-name {
+    font-size: 16px; font-weight: 700; letter-spacing: -0.3px;
+    background: linear-gradient(135deg, var(--text) 0%, var(--text-muted) 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .brand-sub { font-size: 10px; color: var(--text-muted); font-weight: 500; letter-spacing: 0.5px; text-transform: uppercase; }
+  .header-badge {
+    font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 500;
+    color: var(--accent); background: var(--accent-glow);
+    padding: 4px 10px; border-radius: 20px; border: 1px solid rgba(0,212,170,0.2);
+  }
+
+  /* ===== MAIN ===== */
+  .main { max-width: 720px; margin: 0 auto; padding: 32px 24px 60px; position: relative; z-index: 1; }
+  .page-title { font-size: 28px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 6px; line-height: 1.2; }
+  .page-title span { background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .page-desc { font-size: 14px; color: var(--text-muted); line-height: 1.6; margin-bottom: 32px; }
+
+  /* ===== SECTIONS ===== */
+  .section {
+    background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 24px; margin-bottom: 20px; animation: slideUp 0.4s ease both;
+  }
+  .section:nth-child(2) { animation-delay: 0.05s; }
+  .section:nth-child(3) { animation-delay: 0.1s; }
+  .section:nth-child(4) { animation-delay: 0.15s; }
+  .section:nth-child(5) { animation-delay: 0.2s; }
+  @keyframes slideUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+
+  .section-header { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; }
+  .section-icon {
+    width: 32px; height: 32px; border-radius: var(--radius-sm);
+    display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0;
+  }
+  .section-icon.blue { background: var(--primary-glow); }
+  .section-icon.green { background: var(--accent-glow); }
+  .section-icon.orange { background: rgba(247,149,79,0.15); }
+  .section-icon.purple { background: rgba(168,85,247,0.15); }
+  .section-title { font-size: 15px; font-weight: 700; letter-spacing: -0.2px; }
+  .section-subtitle { font-size: 11px; color: var(--text-muted); }
+
+  /* ===== FIELDS ===== */
+  .field { margin-bottom: 16px; }
+  .field:last-child { margin-bottom: 0; }
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .field-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+
+  label { display: block; font-size: 12px; font-weight: 600; color: var(--text-label); margin-bottom: 6px; }
+  label .req { color: var(--orange); margin-left: 2px; }
+  label .opt { color: var(--text-muted); font-weight: 400; font-size: 10px; }
+
+  input[type="text"], input[type="email"], input[type="tel"], input[type="number"], select, textarea {
+    width: 100%; background: var(--bg-input); border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm); padding: 11px 14px;
+    font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; color: var(--text);
+    outline: none; transition: all 0.2s ease;
+  }
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--border-focus); background: var(--bg-input-focus);
+    box-shadow: 0 0 0 3px var(--primary-glow);
+  }
+  input::placeholder, textarea::placeholder { color: var(--text-muted); opacity: 0.6; }
+
+  select {
+    appearance: none; cursor: pointer; padding-right: 36px;
+    background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%237d8aa6' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 12px center;
+  }
+  select option { background: var(--bg-card); color: var(--text); }
+  textarea { resize: vertical; min-height: 80px; }
+
+  /* ===== IMAGE UPLOAD ===== */
+  .upload-area {
+    border: 2px dashed var(--border); border-radius: var(--radius); padding: 28px 20px;
+    text-align: center; cursor: pointer; transition: all 0.25s ease; position: relative;
+  }
+  .upload-area:hover, .upload-area.dragover { border-color: var(--primary); background: rgba(79,110,247,0.05); }
+  .upload-area.has-file { border-color: var(--accent); border-style: solid; background: var(--accent-glow); }
+  .upload-icon { font-size: 32px; margin-bottom: 8px; display: block; }
+  .upload-text { font-size: 13px; color: var(--text-muted); line-height: 1.5; }
+  .upload-text strong { color: var(--primary); }
+  .upload-hint { font-size: 10px; color: var(--text-muted); margin-top: 6px; opacity: 0.7; }
+
+  .upload-preview { display: none; align-items: center; gap: 12px; padding: 4px 0; }
+  .upload-preview.visible { display: flex; }
+  .upload-preview img { width: 56px; height: 56px; object-fit: cover; border-radius: var(--radius-sm); border: 1px solid var(--border); }
+  .upload-preview-info { flex: 1; text-align: left; }
+  .upload-preview-name { font-size: 12px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px; }
+  .upload-preview-size { font-size: 10px; color: var(--text-muted); }
+  .upload-remove {
+    background: rgba(247,79,79,0.15); border: none; color: var(--red);
+    font-size: 14px; width: 28px; height: 28px; border-radius: 50%;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+  }
+  .upload-remove:hover { background: rgba(247,79,79,0.3); }
+  #fileInput { display: none; }
+
+  /* ===== SUBMIT ===== */
+  .submit-section { padding: 0; background: transparent; border: none; }
+  .btn-submit {
+    width: 100%; padding: 16px 24px; border: none; border-radius: var(--radius);
+    background: linear-gradient(135deg, var(--primary) 0%, #6580f9 100%);
+    color: #fff; font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 15px; font-weight: 700; cursor: pointer; transition: all 0.25s ease;
+    position: relative; overflow: hidden;
+  }
+  .btn-submit:hover { transform: translateY(-1px); box-shadow: 0 8px 32px var(--primary-glow); }
+  .btn-submit:active { transform: translateY(0); }
+  .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+  .btn-submit .spinner {
+    display: none; width: 18px; height: 18px;
+    border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff;
+    border-radius: 50%; animation: spin 0.6s linear infinite; margin: 0 auto;
+  }
+  .btn-submit.loading .btn-text { display: none; }
+  .btn-submit.loading .spinner { display: block; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .submit-note { text-align: center; font-size: 11px; color: var(--text-muted); margin-top: 12px; line-height: 1.5; }
+
+  /* ===== SUCCESS ===== */
+  .success-card {
+    display: none; background: var(--bg-card); border: 1px solid rgba(0,212,170,0.3);
+    border-radius: var(--radius); padding: 40px 24px; text-align: center;
+  }
+  .success-card.visible { display: block; animation: slideUp 0.4s ease; }
+  .success-icon {
+    width: 64px; height: 64px; border-radius: 50%; background: var(--accent-glow);
+    border: 2px solid rgba(0,212,170,0.3); display: flex; align-items: center;
+    justify-content: center; font-size: 28px; margin: 0 auto 16px;
+    animation: pop 0.5s ease 0.2s both;
+  }
+  @keyframes pop { 0% { transform: scale(0); } 60% { transform: scale(1.15); } 100% { transform: scale(1); } }
+  .success-title { font-size: 20px; font-weight: 700; margin-bottom: 8px; color: var(--accent); }
+  .success-desc { font-size: 13px; color: var(--text-muted); line-height: 1.6; margin-bottom: 20px; }
+  .success-id {
+    font-family: 'JetBrains Mono', monospace; font-size: 12px;
+    background: var(--bg-input); padding: 8px 16px; border-radius: var(--radius-sm);
+    border: 1px solid var(--border); display: inline-block; color: var(--primary);
+  }
+  .btn-new {
+    margin-top: 20px; padding: 12px 24px; border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm); background: transparent; color: var(--text);
+    font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13px; font-weight: 600;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .btn-new:hover { border-color: var(--text-muted); background: var(--bg-input); }
+
+  /* ===== ERROR ===== */
+  .error-msg {
+    display: none; background: rgba(247,79,79,0.1); border: 1px solid rgba(247,79,79,0.3);
+    border-radius: var(--radius-sm); padding: 12px 16px; font-size: 12px;
+    color: var(--red); margin-bottom: 16px; line-height: 1.5;
+  }
+  .error-msg.visible { display: block; animation: slideUp 0.3s ease; }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 600px) {
+    .main { padding: 24px 16px 48px; }
+    .section { padding: 20px 16px; }
+    .page-title { font-size: 22px; }
+    .field-row, .field-row-3 { grid-template-columns: 1fr; }
+    .header-badge { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-inner">
+    <div class="brand">
+      <div class="brand-icon">A</div>
+      <div class="brand-text">
+        <div class="brand-name">AutomaxHub</div>
+        <div class="brand-sub">Marketing Intelligence</div>
+      </div>
+    </div>
+    <div class="header-badge">● Agente de Produtos</div>
+  </div>
+</div>
+
+<div class="main">
+  <h1 class="page-title">Solicitar <span>Análise Competitiva</span></h1>
+  <p class="page-desc">
+    Preencha os dados do novo produto. Nosso agente de IA vai buscar concorrentes, comparar preços, funcionalidades e gerar um relatório completo automaticamente.
+  </p>
+
+  <div class="error-msg" id="errorMsg"></div>
+
+  <div id="formContainer">
+
+    <!-- 1: PRODUTO -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon blue">📦</div>
+        <div>
+          <div class="section-title">Dados do Produto</div>
+          <div class="section-subtitle">Informações básicas sobre o produto a ser analisado</div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Nome do Produto <span class="req">*</span></label>
+        <input type="text" id="productName" placeholder="Ex: Geladeira Frost Free Side By Side 480L Inox">
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label>Departamento <span class="req">*</span></label>
+          <select id="department" onchange="updateCategories()">
+            <option value="">Selecione o departamento...</option>
+            <option value="climatizacao">Climatização</option>
+            <option value="eletrodomesticos">Eletrodomésticos</option>
+            <option value="eletroportateis">Eletroportáteis</option>
+            <option value="informatica">Informática</option>
+            <option value="tvs">TVs</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Categoria <span class="req">*</span></label>
+          <select id="category" disabled>
+            <option value="">Selecione o departamento primeiro...</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Marca / Fabricante <span class="opt">(se souber)</span></label>
+        <input type="text" id="brand" placeholder="Ex: HQ, Metalfrio, Gelopar, Consul, Electrolux...">
+      </div>
+
+      <div class="field">
+        <label>Modelo / SKU <span class="opt">(se souber)</span></label>
+        <input type="text" id="model" placeholder="Ex: HQ-480SBSFFK, VB40AH">
+      </div>
+    </div>
+
+    <!-- 2: SPECS -->
+    <div class="section" id="specsSection">
+      <div class="section-header">
+        <div class="section-icon orange">⚙️</div>
+        <div>
+          <div class="section-title">Especificações Técnicas</div>
+          <div class="section-subtitle">Quanto mais detalhes, melhor a análise competitiva</div>
+        </div>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label>Capacidade</label>
+          <input type="text" id="capacity" placeholder="Ex: 480 litros, 12.000 BTU, 32&quot;">
+        </div>
+        <div class="field">
+          <label>Voltagem</label>
+          <select id="voltage">
+            <option value="">Selecione...</option>
+            <option value="110V">110V</option>
+            <option value="220V">220V</option>
+            <option value="bivolt">Bivolt</option>
+            <option value="nao-se-aplica">Não se aplica</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field-row-3">
+        <div class="field">
+          <label>Cor</label>
+          <select id="color">
+            <option value="">Selecione...</option>
+            <option value="branca">Branca</option>
+            <option value="preta">Preta</option>
+            <option value="inox">Inox</option>
+            <option value="prata">Prata</option>
+            <option value="cinza">Cinza</option>
+            <option value="outra">Outra</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Tipo de Degelo</label>
+          <select id="defrostType">
+            <option value="">Selecione...</option>
+            <option value="frost-free">Frost Free</option>
+            <option value="cycle-defrost">Cycle Defrost</option>
+            <option value="manual">Manual</option>
+            <option value="nao-se-aplica">Não se aplica</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Tecnologia</label>
+          <select id="technology">
+            <option value="">Selecione...</option>
+            <option value="inverter">Inverter</option>
+            <option value="convencional">Convencional</option>
+            <option value="smart">Smart / Wi-Fi</option>
+            <option value="nao-se-aplica">Não se aplica</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label>Dimensões <span class="opt">(LxAxP)</span></label>
+          <input type="text" id="dimensions" placeholder="Ex: 83 x 178 x 65 cm">
+        </div>
+        <div class="field">
+          <label>Peso</label>
+          <input type="text" id="weight" placeholder="Ex: 85 kg">
+        </div>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label>Consumo Energético</label>
+          <input type="text" id="energy" placeholder="Ex: Classe A, 45 kWh/mês">
+        </div>
+        <div class="field">
+          <label>Tipo do Produto</label>
+          <input type="text" id="productType" placeholder="Ex: Side by Side, Top Mount, French Door">
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Especificações Adicionais <span class="opt">(opcional)</span></label>
+        <textarea id="otherSpecs" placeholder="Descreva qualquer especificação relevante: iluminação LED, painel digital, controle de temperatura, rodízios, prateleiras, porta de vidro, sistema frost free, ciclo quente/frio, etc."></textarea>
+      </div>
+    </div>
+
+    <!-- 3: IMAGEM -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon purple">📸</div>
+        <div>
+          <div class="section-title">Imagem do Produto</div>
+          <div class="section-subtitle">Ajuda a IA a identificar concorrentes visuais similares</div>
+        </div>
+      </div>
+
+      <div class="upload-area" id="uploadArea">
+        <div id="uploadPlaceholder">
+          <span class="upload-icon">📷</span>
+          <div class="upload-text"><strong>Clique para enviar</strong> ou arraste a imagem</div>
+          <div class="upload-hint">PNG, JPG ou WEBP — máximo 5MB</div>
+        </div>
+        <div class="upload-preview" id="uploadPreview">
+          <img id="previewImg" src="" alt="">
+          <div class="upload-preview-info">
+            <div class="upload-preview-name" id="previewName"></div>
+            <div class="upload-preview-size" id="previewSize"></div>
+          </div>
+          <button class="upload-remove" id="removeFile" type="button">&times;</button>
+        </div>
+      </div>
+      <input type="file" id="fileInput" accept="image/png,image/jpeg,image/webp">
+    </div>
+
+    <!-- 4: CONTEXTO -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon green">💡</div>
+        <div>
+          <div class="section-title">Contexto da Análise</div>
+          <div class="section-subtitle">Informações que ajudam a direcionar a análise competitiva</div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Objetivo <span class="opt">(opcional)</span></label>
+        <select id="objective">
+          <option value="">Selecione...</option>
+          <option value="lancamento">Lançamento de novo produto no portfólio</option>
+          <option value="precificacao">Definir estratégia de precificação</option>
+          <option value="benchmark">Benchmark competitivo do segmento</option>
+          <option value="reposicionamento">Reposicionar produto existente</option>
+          <option value="expansao">Avaliar expansão para nova categoria</option>
+          <option value="outro">Outro</option>
+        </select>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label>Faixa de Preço Alvo — Mínimo <span class="opt">(R$)</span></label>
+          <input type="number" id="priceMin" placeholder="Ex: 2500">
+        </div>
+        <div class="field">
+          <label>Faixa de Preço Alvo — Máximo <span class="opt">(R$)</span></label>
+          <input type="number" id="priceMax" placeholder="Ex: 4500">
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Concorrentes Específicos <span class="opt">(se quiser comparar com alguém)</span></label>
+        <input type="text" id="competitors" placeholder="Ex: Consul CRM45, Electrolux IF45S, Samsung RT46">
+      </div>
+
+      <div class="field">
+        <label>Observações <span class="opt">(opcional)</span></label>
+        <textarea id="notes" placeholder="Qualquer informação extra: foco em modelos inox, comparar também com capacidades próximas (±50L), verificar versão bivolt, etc."></textarea>
+      </div>
+    </div>
+
+    <!-- 5: SOLICITANTE -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon blue">👤</div>
+        <div>
+          <div class="section-title">Dados do Solicitante</div>
+          <div class="section-subtitle">Para envio do relatório final</div>
+        </div>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label>Seu Nome <span class="req">*</span></label>
+          <input type="text" id="requesterName" placeholder="Nome completo">
+        </div>
+        <div class="field">
+          <label>WhatsApp <span class="req">*</span></label>
+          <input type="tel" id="requesterWhatsapp" placeholder="(31) 99999-9999">
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Email <span class="opt">(para receber o relatório)</span></label>
+        <input type="email" id="requesterEmail" placeholder="seu@email.com">
+      </div>
+    </div>
+
+    <!-- SUBMIT -->
+    <div class="section submit-section">
+      <button class="btn-submit" id="submitBtn" onclick="submitForm()">
+        <span class="btn-text">🚀 Iniciar Análise Competitiva</span>
+        <div class="spinner"></div>
+      </button>
+      <div class="submit-note">
+        O agente levará aproximadamente 10-15 minutos para gerar o relatório completo.<br>
+        Você receberá o resultado via WhatsApp e email.
+      </div>
+    </div>
+
+  </div>
+
+  <!-- SUCCESS -->
+  <div class="success-card" id="successCard">
+    <div class="success-icon">✅</div>
+    <div class="success-title">Análise Iniciada!</div>
+    <div class="success-desc">
+      Seu pedido foi recebido e o agente de IA já está coletando dados de mercado.<br>
+      Você receberá o relatório completo via WhatsApp em até 15 minutos.
+    </div>
+    <div class="success-id" id="successId">ID: ---</div>
+    <br>
+    <button class="btn-new" onclick="resetForm()">+ Nova Análise</button>
+  </div>
+</div>
+
+<script>
+  // ===== CONFIG =====
+  const WEBHOOK_URL = 'https://n8n.automaxhub.com.br/webhook/analyze-product';
+
+  // ===== CATEGORIES =====
+  const CATEGORIES = {
+    climatizacao: [
+      { value: 'ar-condicionado-split', label: 'Ar Condicionado Split' },
+      { value: 'ar-condicionado-portatil', label: 'Ar Condicionado Portátil' }
+    ],
+    eletrodomesticos: [
+      { value: 'geladeiras', label: 'Geladeiras' },
+      { value: 'freezers', label: 'Freezers' },
+      { value: 'frigobares', label: 'Frigobares' },
+      { value: 'cervejeiras', label: 'Cervejeiras' },
+      { value: 'adegas', label: 'Adegas' },
+      { value: 'cooktops', label: 'Cooktops' },
+      { value: 'fornos', label: 'Fornos' },
+      { value: 'lava-loucas', label: 'Lava-louças' },
+      { value: 'maquinas-de-gelo', label: 'Máquinas de Gelo' }
+    ],
+    eletroportateis: [
+      { value: 'fritadeiras-eletricas', label: 'Fritadeiras Elétricas' },
+      { value: 'fornos-eletricos', label: 'Fornos Elétricos' },
+      { value: 'cooktops-portateis', label: 'Cooktops Portáteis' },
+      { value: 'panelas-eletricas', label: 'Panelas Elétricas' },
+      { value: 'sanduicheiras', label: 'Sanduicheiras' },
+      { value: 'maquinas-de-gelo-portateis', label: 'Máquinas de Gelo Portáteis' },
+      { value: 'ar-condicionado-portatil', label: 'Ar Condicionado Portátil' }
+    ],
+    informatica: [
+      { value: 'monitores', label: 'Monitores' }
+    ],
+    tvs: [
+      { value: 'smart-tvs', label: 'Smart TVs' }
+    ]
+  };
+
+  function updateCategories() {
+    const dept = document.getElementById('department').value;
+    const catSelect = document.getElementById('category');
+
+    catSelect.innerHTML = '';
+    if (!dept) {
+      catSelect.innerHTML = '<option value="">Selecione o departamento primeiro...</option>';
+      catSelect.disabled = true;
+      return;
+    }
+
+    catSelect.disabled = false;
+    catSelect.innerHTML = '<option value="">Selecione a categoria...</option>';
+    CATEGORIES[dept].forEach(cat => {
+      const opt = document.createElement('option');
+      opt.value = cat.value;
+      opt.textContent = cat.label;
+      catSelect.appendChild(opt);
+    });
+  }
+
+  // ===== PHONE MASK =====
+  document.getElementById('requesterWhatsapp').addEventListener('input', function(e) {
+    let v = e.target.value.replace(/\D/g, '');
+    if (v.length > 11) v = v.substring(0, 11);
+    if (v.length > 6) v = `(${v.substring(0,2)}) ${v.substring(2,7)}-${v.substring(7)}`;
+    else if (v.length > 2) v = `(${v.substring(0,2)}) ${v.substring(2)}`;
+    else if (v.length > 0) v = `(${v}`;
+    e.target.value = v;
+  });
+
+  // ===== FILE UPLOAD =====
+  const uploadArea = document.getElementById('uploadArea');
+  const fileInput = document.getElementById('fileInput');
+  const uploadPlaceholder = document.getElementById('uploadPlaceholder');
+  const uploadPreview = document.getElementById('uploadPreview');
+  const removeFile = document.getElementById('removeFile');
+  let selectedFile = null;
+
+  uploadArea.addEventListener('click', (e) => {
+    if (e.target === removeFile || removeFile.contains(e.target)) return;
+    fileInput.click();
+  });
+  uploadArea.addEventListener('dragover', (e) => { e.preventDefault(); uploadArea.classList.add('dragover'); });
+  uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('dragover'));
+  uploadArea.addEventListener('drop', (e) => {
+    e.preventDefault(); uploadArea.classList.remove('dragover');
+    if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
+  });
+  fileInput.addEventListener('change', () => { if (fileInput.files[0]) handleFile(fileInput.files[0]); });
+
+  function handleFile(file) {
+    if (file.size > 5 * 1024 * 1024) { showError('Arquivo muito grande. Máximo 5MB.'); return; }
+    if (!['image/png','image/jpeg','image/webp'].includes(file.type)) { showError('Use PNG, JPG ou WEBP.'); return; }
+    selectedFile = file;
+    const reader = new FileReader();
+    reader.onload = (e) => { document.getElementById('previewImg').src = e.target.result; };
+    reader.readAsDataURL(file);
+    document.getElementById('previewName').textContent = file.name;
+    document.getElementById('previewSize').textContent = (file.size / 1024).toFixed(0) + ' KB';
+    uploadPlaceholder.style.display = 'none';
+    uploadPreview.classList.add('visible');
+    uploadArea.classList.add('has-file');
+  }
+
+  removeFile.addEventListener('click', (e) => {
+    e.stopPropagation(); selectedFile = null; fileInput.value = '';
+    uploadPlaceholder.style.display = 'block';
+    uploadPreview.classList.remove('visible');
+    uploadArea.classList.remove('has-file');
+  });
+
+  // ===== SUBMIT =====
+  function showError(msg) {
+    const el = document.getElementById('errorMsg');
+    el.textContent = msg; el.classList.add('visible');
+    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    setTimeout(() => el.classList.remove('visible'), 5000);
+  }
+
+  async function submitForm() {
+    const productName = document.getElementById('productName').value.trim();
+    const department = document.getElementById('department').value;
+    const category = document.getElementById('category').value;
+    const requesterName = document.getElementById('requesterName').value.trim();
+    const requesterWhatsapp = document.getElementById('requesterWhatsapp').value.trim();
+
+    if (!productName) { showError('Informe o nome do produto.'); return; }
+    if (!department) { showError('Selecione o departamento.'); return; }
+    if (!category) { showError('Selecione a categoria.'); return; }
+    if (!requesterName) { showError('Informe seu nome.'); return; }
+    if (!requesterWhatsapp || requesterWhatsapp.replace(/\D/g,'').length < 10) {
+      showError('Informe um WhatsApp válido.'); return;
+    }
+
+    const btn = document.getElementById('submitBtn');
+    btn.classList.add('loading'); btn.disabled = true;
+
+    const deptLabel = document.getElementById('department').selectedOptions[0].text;
+    const catLabel = document.getElementById('category').selectedOptions[0].text;
+
+    const payload = {
+      productName,
+      department: { value: department, label: deptLabel },
+      category: { value: category, label: catLabel },
+      brand: document.getElementById('brand').value.trim(),
+      model: document.getElementById('model').value.trim(),
+      specs: {
+        capacity: document.getElementById('capacity').value.trim(),
+        voltage: document.getElementById('voltage').value,
+        color: document.getElementById('color').value,
+        defrostType: document.getElementById('defrostType').value,
+        technology: document.getElementById('technology').value,
+        dimensions: document.getElementById('dimensions').value.trim(),
+        weight: document.getElementById('weight').value.trim(),
+        energy: document.getElementById('energy').value.trim(),
+        productType: document.getElementById('productType').value.trim(),
+        other: document.getElementById('otherSpecs').value.trim()
+      },
+      hasImage: !!selectedFile,
+      imageBase64: null,
+      context: {
+        objective: document.getElementById('objective').value,
+        priceMin: document.getElementById('priceMin').value || null,
+        priceMax: document.getElementById('priceMax').value || null,
+        competitors: document.getElementById('competitors').value.trim(),
+        notes: document.getElementById('notes').value.trim()
+      },
+      requester: {
+        name: requesterName,
+        whatsapp: requesterWhatsapp.replace(/\D/g, ''),
+        email: document.getElementById('requesterEmail').value.trim()
+      },
+      channel: 'formulario',
+      requestedAt: new Date().toISOString()
+    };
+
+    if (selectedFile) {
+      payload.imageBase64 = await new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.readAsDataURL(selectedFile);
+      });
+    }
+
+    try {
+      const response = await fetch(WEBHOOK_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+      let result = {};
+      try { result = await response.json(); } catch(e) {}
+
+      document.getElementById('formContainer').style.display = 'none';
+      document.getElementById('successCard').classList.add('visible');
+      document.getElementById('successId').textContent = 'ID: ' + (result.analysisId || new Date().toISOString().replace(/[-:T]/g,'').substring(0,14));
+    } catch (err) {
+      showError('Erro ao enviar: ' + err.message + '. Tente novamente em alguns instantes.');
+    } finally {
+      btn.classList.remove('loading'); btn.disabled = false;
+    }
+  }
+
+  function resetForm() {
+    document.getElementById('formContainer').style.display = 'block';
+    document.getElementById('successCard').classList.remove('visible');
+    document.querySelectorAll('input:not(#fileInput), textarea').forEach(el => el.value = '');
+    document.querySelectorAll('select').forEach(el => el.selectedIndex = 0);
+    document.getElementById('category').disabled = true;
+    document.getElementById('category').innerHTML = '<option value="">Selecione o departamento primeiro...</option>';
+    selectedFile = null; fileInput.value = '';
+    uploadPlaceholder.style.display = 'block';
+    uploadPreview.classList.remove('visible');
+    uploadArea.classList.remove('has-file');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+</script>
+
+</body>
+</html>
